@@ -12,8 +12,7 @@ namespace SysFileScan
             string ignoreFile = Path.Combine(AppContext.BaseDirectory, "ignore.txt");
             var ignore = File.Exists(ignoreFile) ? File.ReadAllLines(ignoreFile) : [];
 
-            //string baseFolder = Directory.GetCurrentDirectory();
-            string baseFolder = "/";
+            string baseFolder = Path.GetPathRoot(Directory.GetCurrentDirectory());
             Console.WriteLine("Base folder: " + baseFolder);
 
             string outputFile = Path.Combine(AppContext.BaseDirectory, "report_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt");
@@ -37,6 +36,11 @@ namespace SysFileScan
                 catch (DirectoryNotFoundException ex)
                 {
                     Console.WriteLine($"Can't access folder: {folder} - {ex.Message}");
+                    return;
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Console.WriteLine($"Unauthorized: {folder} - {ex.Message}");
                     return;
                 }
                 foreach (var file in files)
